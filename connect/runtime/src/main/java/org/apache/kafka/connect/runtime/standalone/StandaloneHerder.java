@@ -123,6 +123,11 @@ public class StandaloneHerder extends AbstractHerder {
     }
 
     @Override
+    public synchronized void connectorsSummary(final Callback<Map<String,Map<String,String>>> callback) {
+        return;
+    }
+
+    @Override
     public synchronized void connectorInfo(String connName, Callback<ConnectorInfo> callback) {
         ConnectorInfo connectorInfo = createConnectorInfo(connName);
         if (connectorInfo == null) {

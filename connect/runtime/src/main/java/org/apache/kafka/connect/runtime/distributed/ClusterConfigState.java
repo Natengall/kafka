@@ -108,6 +108,13 @@ public class ClusterConfigState {
     }
 
     /**
+     * Get a list of the connectors in this configuration
+     */
+    public Map<String, Map<String, String>> connectorsSummary() {
+    	return connectorConfigs;
+    }
+
+    /**
      * Get the configuration for a connector.  The configuration will have been transformed by
      * {@link org.apache.kafka.common.config.ConfigTransformer} by having all variable
      * references replaced with the current values from external instances of

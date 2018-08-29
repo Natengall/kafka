@@ -251,7 +251,7 @@ class WorkerSinkTask extends WorkerTask {
      */
     private void onCommitCompleted(Throwable error, long seqno, Map<TopicPartition, OffsetAndMetadata> committedOffsets) {
         if (commitSeqno != seqno) {
-            log.debug("{} Received out of order commit callback for sequence number {}, but most recent sequence number is {}",
+            log.info("{} Received out of order commit callback for sequence number {}, but most recent sequence number is {}",
                     this, seqno, commitSeqno);
             sinkTaskMetricsGroup.recordOffsetCommitSkip();
         } else {
@@ -262,10 +262,10 @@ class WorkerSinkTask extends WorkerTask {
                 commitFailures++;
                 recordCommitFailure(durationMillis, error);
             } else {
-                log.debug("{} Finished offset commit successfully in {} ms for sequence number {}: {}",
+                log.info("{} Finished offset commit successfully in {} ms for sequence number {}: {}",
                         this, durationMillis, seqno, committedOffsets);
                 if (committedOffsets != null) {
-                    log.debug("{} Setting last committed offsets to {}", this, committedOffsets);
+                    log.info("{} Setting last committed offsets to {}", this, committedOffsets);
                     lastCommittedOffsets = committedOffsets;
                     sinkTaskMetricsGroup.recordCommittedOffsets(committedOffsets);
                 }
@@ -468,6 +468,12 @@ class WorkerSinkTask extends WorkerTask {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
 
         props.putAll(workerConfig.originalsWithPrefix("consumer."));
+
+        for (String taskConfigKey : taskConfig.keySet()) {
+            if (taskConfigKey.startsWith("consumer.")) {
+                props.put(taskConfigKey.substring(9), taskConfig.get(taskConfigKey));
+            }
+        }
 
         KafkaConsumer<byte[], byte[]> newConsumer;
         try {

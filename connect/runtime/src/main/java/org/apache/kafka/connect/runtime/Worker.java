@@ -497,6 +497,11 @@ public class Worker {
                     internalKeyConverter, internalValueConverter);
             OffsetStorageWriter offsetWriter = new OffsetStorageWriter(offsetBackingStore, id.connector(),
                     internalKeyConverter, internalValueConverter);
+            for (String taskConfigKey : connConfig.originals().keySet()) {
+                if (taskConfigKey.startsWith("producer.")) {
+                    producerProps.put(taskConfigKey.substring(9), connConfig.get(taskConfigKey));
+                }
+            }
             KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(producerProps);
 
             // Note we pass the configState as it performs dynamic transformations under the covers

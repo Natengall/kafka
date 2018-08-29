@@ -579,6 +579,7 @@ public final class RecordAccumulator {
                                         }
                                         batch.close();
                                         size += batch.records().sizeInBytes();
+                                        log.info("Closed RecordBatch for " + tp.topic() + " with batch size: " + size + ", compression: " + this.compression);
                                         ready.add(batch);
                                         batch.drained(now);
                                     }

@@ -45,6 +45,7 @@ import org.apache.kafka.connect.storage.OffsetStorageReader;
 import org.apache.kafka.connect.storage.OffsetStorageWriter;
 import org.apache.kafka.connect.util.ConnectUtils;
 import org.apache.kafka.connect.util.ConnectorTaskId;
+import org.apache.log4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -329,7 +330,17 @@ class WorkerSourceTask extends WorkerTask {
                                     log.error("{} failed to send record to {}: {}", this, topic, e);
                                     log.debug("{} Failed record: {}", this, preTransformRecord);
                                 } else {
-                                    log.trace("{} Wrote record successfully: topic {} partition {} offset {}",
+                                    MDC.put("topic", recordMetadata.topic());
+                                    MDC.put("partition", recordMetadata.partition());
+                                    MDC.put("offset", recordMetadata.offset());
+                                    MDC.put("serializedKeySize", recordMetadata.serializedKeySize());
+                                    MDC.put("serializedValueSize", recordMetadata.serializedValueSize());
+                                    try {
+                                        MDC.put("key", record.key());
+                                    } catch(NullPointerException npe) {
+                                        MDC.put("key", "");
+                                    }
+                                    log.info("{} Wrote record successfully: topic {} partition {} offset {}",
                                             this,
                                             recordMetadata.topic(), recordMetadata.partition(),
                                             recordMetadata.offset());

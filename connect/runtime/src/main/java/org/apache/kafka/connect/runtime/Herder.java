@@ -70,6 +70,13 @@ public interface Herder {
     void connectors(Callback<Collection<String>> callback);
 
     /**
+     * Get a list of connectors currently running in this cluster and their properties.
+     *
+     * @returns A list of connector names along with their properties
+     */
+    void connectorsSummary(Callback<Map<String,Map<String,String>>> callback);
+
+    /**
      * Get the definition and status of a connector.
      */
     void connectorInfo(String connName, Callback<ConnectorInfo> callback);

@@ -534,6 +534,7 @@ tasks.create(name: "docsJarAll", dependsOn: withDefScalaVersions('docsJar') + pk
 tasks.create(name: "testConnect", dependsOn: connectPkgs.collect { it + ":test" }) {}
 tasks.create(name: "testAll", dependsOn: withDefScalaVersions('testScala') + pkgs.collect { it + ":test" }) { }
 
+tasks.create(name: "installConnect", dependsOn: connectPkgs.collect { it + ":install" }) { }
 tasks.create(name: "installAll", dependsOn: withDefScalaVersions('install') + pkgs.collect { it + ":install" }) { }
 
 tasks.create(name: "releaseTarGzAll", dependsOn: withDefScalaVersions('releaseTarGz')) { }
@@ -1226,6 +1227,27 @@ project(':log4j-appender') {
     enabled = false
   }
 
+}
+
+project(':connect') {
+  tasks.create(name: "releaseTarGzConnect", type: Tar) {
+    compression = Compression.GZIP
+    from(project(':tools').jar) { into("libs/") }
+    from(project(':tools').configurations.runtime) { into("libs/") }
+    from(project(':connect:api').jar) { into("libs/") }
+    from(project(':connect:api').configurations.runtime) { into("libs/") }
+    from(project(':connect:runtime').jar) { into("libs/") }
+    from(project(':connect:runtime').configurations.runtime) { into("libs/") }
+    from(project(':connect:transforms').jar) { into("libs/") }
+    from(project(':connect:transforms').configurations.runtime) { into("libs/") }
+    from(project(':connect:json').jar) { into("libs/") }
+    from(project(':connect:json').configurations.runtime) { into("libs/") }
+    from(project(':connect:file').jar) { into("libs/") }
+    from(project(':connect:file').configurations.runtime) { into("libs/") }
+    from(project(':connect:basic-auth-extension').jar) { into("libs/") }
+    from(project(':connect:basic-auth-extension').configurations.runtime) { into("libs/") }
+    duplicatesStrategy 'exclude'
+  }
 }
 
 project(':connect:api') {

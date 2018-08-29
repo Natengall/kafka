@@ -439,6 +439,25 @@ public class DistributedHerder extends AbstractHerder implements Runnable {
     }
 
     @Override
+    public synchronized void connectorsSummary(final Callback<Map<String,Map<String,String>>> callback) {
+        log.trace("Submitting connectors summary request");
+
+        addRequest(
+            new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    if (checkRebalanceNeeded(callback))
+                        return null;
+  
+                    callback.onCompletion(null, configState.connectorsSummary());
+                    return null;
+                }
+            },
+            forwardErrorCallback(callback)
+        );
+    }
+
+    @Override
     public void connectorInfo(final String connName, final Callback<ConnectorInfo> callback) {
         log.trace("Submitting connector info request {}", connName);
 
